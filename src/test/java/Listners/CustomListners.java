@@ -5,6 +5,7 @@ import org.slf4j.helpers.Util;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import java.io.IOException;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -64,7 +65,7 @@ public class CustomListners implements ITestListener {
             try {
                 writer = new PrintWriter(new BufferedWriter(new FileWriter("report.html")));
                 writer.println("<html><head><title>Wavekart Report</title></head><body>");
-                writer.println("<h1>Test Report</h1>");
+                writer.println("<h1>Wavekart Test Report</h1>");
                 writer.println("<h2>Test Results</h2>");
                 writer.println("<table border='2'>");
                 writer.println("<tr><th>Test Method</th><th>Status</th><th>Duration (ms)</th><th>Log</th></tr>");
@@ -75,27 +76,47 @@ public class CustomListners implements ITestListener {
 
         @Override
         public void onTestSuccess(ITestResult result) {
-            writeTestResult(result, "Passed");
+            writer.println("<tr>");
+            writer.println("<td>" + result.getMethod().getMethodName() + "</td>");
+            writer.println("<td>Passed</td>");
+            writer.println("<td>" + (result.getEndMillis() - result.getStartMillis()) + "</td>");
+            writer.println("<td></td>");
+            writer.println("</tr>");
         }
 
         @Override
         public void onTestFailure(ITestResult result) {
-            writeTestResult(result, "Failed");
+            logger.error("Test method failed: " + result.getMethod().getMethodName(), result.getThrowable());
+
+            writer.println("<tr>");
+            writer.println("<td>" + result.getMethod().getMethodName() + "</td>");
+            writer.println("<td>Failed</td>");
+            writer.println("<td>" + (result.getEndMillis() - result.getStartMillis()) + "</td>");
+            writer.println("<td>");
+            writer.println("<pre>" + getLogDetails() + "</pre>");
+            writer.println("</td>");
+            writer.println("</tr>");
         }
 
         @Override
         public void onTestSkipped(ITestResult result) {
-            writeTestResult(result, "Skipped");
+            writer.println("<tr>");
+            writer.println("<td>" + result.getMethod().getMethodName() + "</td>");
+            writer.println("<td>Skipped</td>");
+            writer.println("<td>" + (result.getEndMillis() - result.getStartMillis()) + "</td>");
+            writer.println("<td></td>");
+            writer.println("</tr>");
         }
 
         @Override
         public void onFinish(ITestContext context) {
-            writer.println("</table></body></html>");
+            writer.println("</table>");
+            writer.println("</body></html>");
             writer.close();
         }
 
         private void writeTestResult(ITestResult result, String status) {
-            String log = getLog(result);
+            String log = getLogDetails();
             writer.println("<tr>");
             writer.println("<td>" + result.getMethod().getMethodName() + "</td>");
             writer.println("<td>" + status + "</td>");
@@ -104,14 +125,21 @@ public class CustomListners implements ITestListener {
             writer.println("</tr>");
         }
 
-        private String getLog(ITestResult result) {
-            // Retrieve the log for the test result
-            StringBuilder logBuilder = new StringBuilder();
-            logBuilder.append("Detailed log for ").append(result.getMethod().getMethodName()).append("<br/>");
-            // You can enhance this to pull actual log data from a log file or buffer
-            return logBuilder.toString();
-        }
+//        private String getLog(ITestResult result) {
+//            // Retrieve the log for the test result
+//            StringBuilder logBuilder = new StringBuilder();
+//            logBuilder.append("Detailed log for ").append(result.getMethod().getMethodName()).append("<br/>");
+//            // You can enhance this to pull actual log data from a log file or buffer
+//            return logBuilder.toString();
+//        }
+private String getLogDetails() {
+    // Read log file and return its contents
+    try {
+        return new String(java.nio.file.Files.readAllBytes(java.nio.file.Paths.get("test-logs.log")));
+    } catch (IOException e) {
+        return "Error retrieving log details.";
     }
-
+}
+    }
 
 

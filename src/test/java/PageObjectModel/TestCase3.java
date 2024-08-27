@@ -32,8 +32,7 @@ public class TestCase3 {
             driver.get("https://stage-studio.wavemakeronline.com/run-8ksvqqr0tf/ent12665b0f3b39/WaveKart_master/#/Main");
 //        WebDriverWait wait2 = new WebDriverWait(driver, Duration.ofSeconds(50));
             wavekartActions = new WavekartActions(driver);
-        }
-        catch (WebDriverException e) {
+        } catch (WebDriverException e) {
             System.out.println("WebDriverException occurred: " + e.getMessage());
         }
 
@@ -51,12 +50,18 @@ public class TestCase3 {
 
     @BeforeMethod
     public void Login() throws InterruptedException {
-        //  Thread.sleep(5000);
-        wavekartActions.Login();
-        // Thread.sleep(2000);
-        wavekartActions.setUsername("user");
-        wavekartActions.setPassword("user");
-        wavekartActions.SignIn();
+        try {
+
+
+            //  Thread.sleep(5000);
+            wavekartActions.Login();
+            //  Thread.sleep(2000);
+            wavekartActions.setUsername("user");
+            wavekartActions.setPassword("user");
+            wavekartActions.SignIn();
+        } catch (Exception e) {
+            logger.error("Failed to Execute Logout sceanrio.", e);
+        }
     }
 
     @Test
@@ -72,8 +77,7 @@ public class TestCase3 {
             Thread.sleep(2000);
 
             wavekartActions.LoadMoreProperties();
-        }
-        catch (NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             // Handle the exception
             System.out.println("NoSuchElementException occurred: " + e.getMessage());
         }
@@ -82,8 +86,12 @@ public class TestCase3 {
 
     @AfterMethod
     public void Logout() throws InterruptedException {
-        //    Thread.sleep(2000);
-        wavekartActions.Logout();
+        try {
+
+            wavekartActions.Logout();
+        } catch (Exception e) {
+            logger.error("Failed to Execute Logout sceanrio.", e);
+        }
     }
 
     @AfterClass
