@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite" parallel="classes" thread-count="2">
+    <listeners>
+        <listener class-name="Listners.CustomListners"/>
+    </listeners>
+    <test verbose="2" preserve-order="true"
+          name="C:/Users/pavanim_500367/wavemaker/Wavekart/src/test/java/PageObjectModel">
+        <classes>
+            <class name="PageObjectModel.TestCase1"/>
+            <class name="PageObjectModel.TestCase2"/>
+            <class name="PageObjectModel.TestCase3"/>
+
+        </classes>
+    </test>
+</suite>
